@@ -1,6 +1,6 @@
 # Welcome to Remix!
 
-- [Remix Docs](https://remix.run/docs)
+### remix 应用基础 CRUD 模版
 
 ## Development
 
