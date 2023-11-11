@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//1.安装prisma包：npm install --save-dev  prisma npm install @prisma/client
+//2.初始化prisma数据库为sqlite npx prisma init --datasource-provider sqlite
+//3.写model 
+//4.npx prisma db push
+//5.添加.gitignore: /prisma/dev.db
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Joke {
+  id       String   @id @default(uuid())
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  name     String
+  content  String
+}
