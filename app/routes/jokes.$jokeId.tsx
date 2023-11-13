@@ -57,10 +57,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const intent = formDate.get('intent');
   //1-2,验证表单数据
   if (typeof name !== 'string' || typeof content !== 'string')
-    throw Error('表单数据类型错误');
+    throw new Response('表单数据类型错误', { status: 400 });
   //2.根据表单数据选择操作
   if (intent === 'update') return updateJoke(params.jokeId, { name, content });
   if (intent === 'delete') return deleteJoke(params.jokeId);
   //3.找不到对应操作，返回错误处理
-  throw new Response('服务器无法识别此操作', { status: 400 });
+  throw Error('服务器无法识别此操作');
 };
