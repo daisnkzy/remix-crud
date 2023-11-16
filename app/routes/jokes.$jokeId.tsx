@@ -25,7 +25,13 @@ export default function JokeRoute() {
       <Form method="post" key={joke.id}>
         <label>
           Name:
-          <input type="text" name="name" defaultValue={joke.name} required />
+          <input
+            type="text"
+            name="name"
+            defaultValue={joke.name}
+            required
+            autoFocus
+          />
         </label>
         <label>
           Content:
@@ -55,12 +61,36 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const name = formDate.get('name');
   const content = formDate.get('content');
   const intent = formDate.get('intent');
-  //1-2,验证表单数据
+  //1-2.验证表单数据类型，让 ts 不报错
   if (typeof name !== 'string' || typeof content !== 'string')
     throw new Response('表单数据类型错误', { status: 400 });
+  //1-3.验证表单数据规则(服务端)。这里可以return一个错误消息然后保存在变量中，用 useAtionData传给组件并在组件中使用。
+  const errors = {
+    formErrors: [] as string[],
+    filedErrors: [] as string[],
+  };
+  if (name.trim().length <= 3 && name.trim().length >= 30) {
+    errors.filedErrors.push('字符应大于 3 小于 30');
+  }
+  const hasErrors =
+    errors.filedErrors.length > 0 || errors.formErrors.length > 0;
+  if (hasErrors) return json(errors, { status: 400 });
   //2.根据表单数据选择操作
   if (intent === 'update') return updateJoke(params.jokeId, { name, content });
   if (intent === 'delete') return deleteJoke(params.jokeId);
   //3.找不到对应操作，返回错误处理
   throw Error('服务器无法识别此操作');
+
+  //2 和 3 也可以合并为 switch 写法。多个操作时可以选择 switch 写法
+  // switch(intent){
+  //   case 'update':{
+  //     return updateJoke(params.jokeId, { name, content })
+  //   }
+  //   case 'delete':{
+  //     return deleteJoke(params.jokeId)
+  //   }
+  //   default:{
+  //     throw Error('服务器无法识别此操作')
+  //   }
+  // }
 };
